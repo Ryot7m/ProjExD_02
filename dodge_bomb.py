@@ -44,6 +44,12 @@ def main():
     bd_rct = bd_img.get_rect()
     bd_rct.center = x, y
     vx, vy= +5, +5
+    accs = [a for a in range(1, 11)]
+    bb_imgs = []
+    for r in range(1, 11):
+        bb_img = pg.surface((20*r, 20*r))
+        pg.draw.circle(bb_img, (255, 0, 0),(10*r, 10*r), 10*r)
+        bb_imgs.append(bb_img)
     clock = pg.time.Clock()
     tmr = 0
     while True:
@@ -64,6 +70,8 @@ def main():
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1])
         kk_img = kk_imgs[(tuple(sum_mv))]       
         kk_rct.move_ip(sum_mv)
+        avx, avy=vx*accs[min(tmr//500, 9)], vy*accs[min(tmr//500, 9)]
+        bb_img = bb_imgs[min(tmr//500, 9)]
         screen.blit(bg_img, [0, 0])
         # screen.blit(kk_img, [900, 400])
         screen.blit(kk_img,kk_rct)
