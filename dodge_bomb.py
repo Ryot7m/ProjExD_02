@@ -17,8 +17,14 @@ def check_bound(rect: pg.Rect):
     if rect.top < 0 or HEIGHT < rect.bottom:
         tate=False
     return yoko,tate
-
-    
+def check_kkfly():
+    kk_img0 = pg.image.load("ex02/fig/3.png")
+    kk_img0 = pg.transform.rotozoom(kk_img0, 0, 2.0)
+    kk_img1=pg.transform.flip(kk_img0,True,False)
+    return {(0, 0):kk_img0,(-5, 0):kk_img0,(-5, 5):pg.transform.rotozoom(kk_img0,45,1.0),
+            (-5, -5):pg.transform.rotozoom(kk_img0,-45,1.0),(0, -5):pg.transform.rotozoom(kk_img1,90,1.0)
+            ,(0, 5):pg.transform.rotozoom(kk_img1,-90,1.0),(5, 5):pg.transform.rotozoom(kk_img1,-45,1.0)
+            ,(5, -5):pg.transform.rotozoom(kk_img1,45,1.0),(5, 0):kk_img1}     
 
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
@@ -26,6 +32,8 @@ def main():
     bg_img = pg.image.load("ex02/fig/pg_bg.jpg")
     kk_img = pg.image.load("ex02/fig/3.png")
     kk_img = pg.transform.rotozoom(kk_img, 0, 2.0)
+    kk_imgs = check_kkfly()
+    kk_img = kk_imgs[(0, 0)]
     kk_rct = kk_img.get_rect()
     kk_rct.center = 900, 400
     bd_img = pg.Surface((20, 20))
@@ -53,7 +61,8 @@ def main():
                 sum_mv[0] += mv[0]
                 sum_mv[1] += mv[1]
         if check_bound(kk_rct) != (True,True):
-            kk_rct.move_ip(-sum_mv[0], -sum_mv[1])       
+            kk_rct.move_ip(-sum_mv[0], -sum_mv[1])
+        kk_img = kk_imgs[(tuple(sum_mv))]       
         kk_rct.move_ip(sum_mv)
         screen.blit(bg_img, [0, 0])
         # screen.blit(kk_img, [900, 400])
@@ -65,6 +74,7 @@ def main():
         if not tate:
             vy *= -1
         screen.blit(bd_img, bd_rct)
+        # screen.blit(check_kkfly())
         
         pg.display.update()
         tmr += 1
