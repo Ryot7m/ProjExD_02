@@ -10,6 +10,14 @@ delta = {pg.K_UP: (0, -5),
         pg.K_LEFT: (-5, 0),
         pg.K_RIGHT: (5, 0)}
 
+def check_bound(rect: pg.Rect):
+    yoko, tate = True, True
+    if rect.left < 0 or WIDTH < rect.right:
+        yoko = False
+    if rect.top < 0 or HEIGHT < rect.bottom:
+        tate=False
+    return yoko,tate
+
     
 
 def main():
@@ -42,11 +50,18 @@ def main():
             if key_lst[k]:
                 sum_mv[0] += mv[0]
                 sum_mv[1] += mv[1]
+        if check_bound(kk_rct) != (True,True):
+            kk_rct.move_ip(-sum_mv[0], -sum_mv[1])       
         kk_rct.move_ip(sum_mv)
         screen.blit(bg_img, [0, 0])
         # screen.blit(kk_img, [900, 400])
         screen.blit(kk_img,kk_rct)
         bd_rct.move_ip(vx, vy)
+        yoko, tate = check_bound(bd_rct)
+        if not yoko:
+            vx *= -1
+        if not tate:
+            vy *= -1
         screen.blit(bd_img, bd_rct)
         
         pg.display.update()
