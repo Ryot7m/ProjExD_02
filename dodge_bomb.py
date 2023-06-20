@@ -10,11 +10,16 @@ delta = {pg.K_UP: (0, -5),
         pg.K_LEFT: (-5, 0),
         pg.K_RIGHT: (5, 0)}
 
-def check_bound(rect: pg.Rect):
+def check_bound(rect: pg.Rect) ->tuple[bool,bool]:
+    """
+    こうかとんRect，爆弾Rectが画面外 or 画面内かを判定する関数
+    引数：こうかとんRect or 爆弾Rect
+    戻り値：横方向，縦方向の判定結果タプル（True：画面内／False：画面外）
+    """
     yoko, tate = True, True
-    if rect.left < 0 or WIDTH < rect.right:
+    if rect.left < 0 or WIDTH < rect.right: # 横方向判定
         yoko = False
-    if rect.top < 0 or HEIGHT < rect.bottom:
+    if rect.top < 0 or HEIGHT < rect.bottom: # 縦方向判定
         tate=False
     return yoko,tate
 def check_kkfly():
@@ -32,22 +37,27 @@ def main():
     bg_img = pg.image.load("ex02/fig/pg_bg.jpg")
     kk_img = pg.image.load("ex02/fig/3.png")
     kk_img = pg.transform.rotozoom(kk_img, 0, 2.0)
+    # こうかとんSurface（kk_img）からこうかとんRect（kk_rct）を抽出する
     kk_imgs = check_kkfly()
     kk_img = kk_imgs[(0, 0)]
     kk_rct = kk_img.get_rect()
     kk_rct.center = 900, 400
     bd_img = pg.Surface((20, 20))
+    # 練習１
     pg.draw.circle(bd_img, (255, 0, 0), (10, 10), 10)
+    # 黒い部分を透明にする
     bd_img.set_colorkey((0, 0, 0))
     x=random.randint(0, WIDTH)
     y=random.randint(0, HEIGHT)
+    # 爆弾Surface（bd_img）から爆弾Rect（bd_rct）を抽出する
     bd_rct = bd_img.get_rect()
+    # 爆弾Rectの中心座標を乱数で指定する
     bd_rct.center = x, y
-    vx, vy= +5, +5
+    vx, vy= +5, +5 # 練習２
     accs = [a for a in range(1, 11)]
     bb_imgs = []
     for r in range(1, 11):
-        bb_img = pg.surface((20*r, 20*r))
+        bb_img = pg.Surface((20*r, 20*r))
         pg.draw.circle(bb_img, (255, 0, 0),(10*r, 10*r), 10*r)
         bb_imgs.append(bb_img)
     clock = pg.time.Clock()
@@ -56,12 +66,12 @@ def main():
         for event in pg.event.get():
             if event.type == pg.QUIT: 
                 return
-        if kk_rct.colliderect(bd_rct):
+        if kk_rct.colliderect(bd_rct): # 練習５
             print("ゲームオーバー")
             return "ゲームオーバー"  
             
         key_lst = pg.key.get_pressed()
-        sum_mv = [0, 0]
+        sum_mv = [0, 0] # 合計移動量
         for k, mv in delta.items():
             if key_lst[k]:
                 sum_mv[0] += mv[0]
@@ -75,14 +85,13 @@ def main():
         screen.blit(bg_img, [0, 0])
         # screen.blit(kk_img, [900, 400])
         screen.blit(kk_img,kk_rct)
-        bd_rct.move_ip(vx, vy)
+        bd_rct.move_ip(vx, vy) # 練習２
         yoko, tate = check_bound(bd_rct)
         if not yoko:
-            vx *= -1
+            vx *= -1 # 横方向に画面外だったら
         if not tate:
-            vy *= -1
+            vy *= -1 # 縦方向に範囲外だったら
         screen.blit(bd_img, bd_rct)
-        # screen.blit(check_kkfly())
         
         pg.display.update()
         tmr += 1
